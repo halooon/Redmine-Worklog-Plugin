@@ -10,7 +10,7 @@ class WorklogController < ApplicationController
   helper :timelog
   
   def show
-   latest_time_entries_for_user
+   latest_time_entries_for_user 
   end
   
    #this method looks like... as it looks like because at first the requirement was to create or uppdate issues depending on their existence in the system. Creating was dropped later.
