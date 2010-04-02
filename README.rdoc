@@ -1,0 +1,3 @@
+Workloger is Redmine Plugin written to enhance logging time spent on various projects and activities @ Selleo. Except that it has restricted issue names configuration built in since i did not wanted to create another patch/plugin just for that.
+
+Workloger is designed to meet especially our company requrements, though someone might find it helpful, so i am putting it on github.

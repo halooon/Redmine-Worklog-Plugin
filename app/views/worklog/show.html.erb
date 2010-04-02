@@ -1,0 +1,91 @@
+<!--final screen, import-->
+<div id="success">
+  <% if @issues_created %>
+    <h3>Following issues created successfully</h3>
+    <ul>
+      <% @issues_to_create[:success].each do |issue| %>
+        <li><%= "##{issue.id} #{issue.subject} #{issue.project.name}" %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <% if @time_entries_updated %>
+    <h3>Following time entries were logged successfully</h3>
+    <ul>
+      <% @issues_to_update[:success].each do |time_entry| %>
+        <li><%= "#ID: #{time_entry.issue.id}; <strong>#{time_entry.issue.subject}</strong>  (#{"%.2f" % time_entry.hours})" %></li>
+      <% end %>
+    </ul>
+  <% end %>
+</div>
+
+<!--old import, create-->
+<div id="errors">
+  <% if @issues_have_errors %>
+    <h3>Following issues have errors</h3>
+    <% @import_result[:new_issues][:failed].each do |issue| %>
+      <%= issue.subject %>
+      <%= error_messages_for 'issue', :object => issue %>
+      Log Time Errors
+      <%= error_messages_for 'time_entry', :object => issue.time_entries.last %>
+    <% end %>
+  <% end %>
+
+<!--old import, update-->
+  <% if @time_entries_have_errors %>
+    <h3>Following time entries have errors</h3>
+    <% @issues_to_update[:failed].each do |time_entry| %>
+      Time Entry Errors
+      <%= error_messages_for 'time_entry', :object => time_entry %>
+    <% end %>
+  <% end %>
+
+<!--old load activities-->
+  <% if @lines_have_errors %>
+    <h3>Following lines have errors:</h3>
+    <ul>
+      <% @load_result[:errors].each do |err| %>
+        <li><%= err %></li>
+      <% end %>
+    </ul>
+  <% end %>
+</div>
+
+
+<% form_tag load_activities_worklog_path do %>
+  <%= text_area_tag 'lines', @lines, :rows => 7, :style => "width: 99%", :id => "importer" %>
+  Import format: YYYY-MM-DD HH:MM HH:MM BUCKET1/BUCKET2 tag1, some other tag | Issue's subject or id Long description<br>
+    Additional notes:<br>
+    <!--1. Feeding no bucket is better than feeding wrong bucket.<br>-->
+  <br>
+    1. Atm, system will validate if an update overlaps a time entry connected to that issue but will not validate time and date for different issues.<br>
+    2. Currently, buckets you load are ignored as per request. You need to supply unique issue name or number.<br>
+    3. Since buckets are ignored, it is logical that you <b>can't</b> create new issues via worklogger(to create, buckets are needed which identify the project you would like to create issue for).<br>
+  <%= submit_tag "Import" %>
+<% end %>
+
+
+<% if @latest_time_entry_activities %>
+<table class="list issues">
+  <thead>
+    <th width="2%">
+      <%= link_to image_tag('toggle_check.png'), {}, :onclick => 'toggleIssuesSelection(Element.up(this, "table")); return false;',
+                                                           :title => "#{l(:button_check_all)}/#{l(:button_uncheck_all)}", :class => 'toggle-all' %>
+    </th>
+    <th width="8%"><%= l(:label_date) %></th>
+    <th width="10%"><%= l(:label_member) %></th>
+    <th width="15%"><%= l(:label_activity) %></th>
+    <th width="15%"><%= l(:label_project) %></th>
+    <th width="10%"><%= l(:label_issue) %></th>
+    <th width="25%"><%= l(:field_comments) %></th>
+    <th width="10%"><%= l(:field_hours) %>
+    <%= Redmine::Hook.call_hook(:plugin_timesheet_views_timesheet_group_header, { }) %>
+    <th></th>
+  </thead>
+  <tbody>
+   <%= render :partial => "time_entry", :collection => @latest_time_entry_activities %>
+  </tbody>
+</table>
+<br />
+<% end %>
+

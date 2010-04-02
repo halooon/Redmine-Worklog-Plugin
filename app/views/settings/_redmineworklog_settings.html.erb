@@ -1,0 +1,35 @@
+<style>
+  ul.fields_list {
+    list-style: none;
+
+  }
+
+  ul.fields_list li {
+    height: 30px;
+  }
+
+  ul.fields_list li label {
+    display: block;
+    position: relative;
+    overflow: hidden;
+    height: 20px;
+    width: 100px;
+    margin: 0px;
+    text-align: right;
+    padding-right: 5px;
+  }
+</style>
+
+<% @users = User.all %>
+<ul class="fields_list">
+<% @users.each do |user| %>
+  <li><label><%= user.login %></label>
+  <%= check_box_tag "settings[user_access_list][#{user.id}]", 1,
+                    (@settings[:user_access_list][user.id.to_s] unless @settings.blank? || !@settings[:user_access_list]) %></li>
+<% end %>
+</ul>
+
+<p><label>Forbidden issue names</label><%= text_field_tag 'settings[forbidden_names]', @settings['forbidden_names'] %></p>
+<p>Please input them like:   name|another_name|yet_another_name   etc</p>
+
+
