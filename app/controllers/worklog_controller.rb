@@ -2,11 +2,11 @@ class WorklogController < ApplicationController
   unloadable
 
   before_filter :check_rights
-
-  helper :sort
   include SortHelper
-  helper :issues
   include ApplicationHelper
+  
+  helper :sort  
+  helper :issues
   helper :timelog
   
   def show
